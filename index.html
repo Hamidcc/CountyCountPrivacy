@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CountyCount — The #1 Counting Bot on Discord</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0b0f;
+  --card:#111018;
+  --muted:#bfc1c9;
+  --accent1:#ffb86b;
+  --accent2:#ff3b30;
+  --accent-gradient: linear-gradient(135deg,var(--accent1),var(--accent2));
+  --glass: rgba(255,255,255,0.03);
+  --glass-2: rgba(255,255,255,0.02);
+  --maxw: 1400px;
+}
+*{box-sizing:border-box;margin:0;padding:0;scroll-behavior:smooth}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(900px 420px at 6% 12%, rgba(255,59,48,0.03), transparent 8%),
+    radial-gradient(700px 360px at 92% 86%, rgba(255,184,107,0.03), transparent 10%),
+    var(--bg);
+  color:#fff;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+
+/* Intro overlay (page load animation) */
+#intro {
+  position:fixed;inset:0;z-index:9999;display:grid;place-items:center;
+  background:linear-gradient(180deg, rgba(11,11,15,1), rgba(11,11,15,0.82));
+  pointer-events:none;
+}
+#intro .card{
+  width:min(920px,94%);max-width:920px;padding:44px;border-radius:20px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(6px);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.75);
+  transform-origin:center;
+  display:flex;gap:28px;align-items:center;
+}
+#intro .badge{
+  width:132px;height:132px;border-radius:50%;flex:0 0 132px;
+  background-image:url('https://cdn.discordapp.com/avatars/1433616050188062821/fe7e7bafc90f35ccba3bc6f917148549.png?size=1024');
+  background-size:cover;background-position:center;border:6px solid rgba(255,255,255,0.06);
+  box-shadow:0 12px 36px rgba(255,59,48,0.14), inset 0 -6px 18px rgba(0,0,0,0.36);
+  animation:intro-pulse 1200ms ease-in-out 1;
+}
+@keyframes intro-pulse{0%{transform:scale(.92)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+#intro .meta{flex:1}
+#intro h1{font-weight:900;letter-spacing:0.06em;font-size:30px;line-height:1.02}
+#intro p{color:var(--muted);margin-top:10px;font-size:14px}
+#intro .bar{margin-top:18px;height:10px;border-radius:999px;overflow:hidden;background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));}
+#intro .bar > i{display:block;height:100%;width:0%;background:var(--accent-gradient);box-shadow:0 8px 28px rgba(255,59,48,0.12);transition:width 900ms cubic-bezier(.2,.9,.2,1)}
+
+/* Layout */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:36px 28px 160px}
+.header{
+  display:flex;align-items:center;gap:22px;padding:30px;border-radius:20px;background:linear-gradient(180deg,var(--glass),var(--glass-2));
+  border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(6px);
+  box-shadow:0 14px 50px rgba(0,0,0,0.6);margin-top:22px;
+}
+.logo{
+  width:152px;height:152px;border-radius:50%;flex:0 0 152px;background-image:url('https://cdn.discordapp.com/avatars/1433616050188062821/fe7e7bafc90f35ccba3bc6f917148549.png?size=1024');
+  background-size:cover;background-position:center;border:6px solid rgba(255,255,255,0.06);box-shadow:0 16px 48px rgba(255,59,48,0.14);
+  transition:transform .28s cubic-bezier(.2,.9,.2,1);
+}
+.header .title{flex:1}
+.header h1{font-size:38px;line-height:1;font-weight:900;letter-spacing:0.06em}
+.header p{color:var(--muted);margin-top:8px}
+.header .ctas{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;padding:12px 20px;border-radius:999px;font-weight:800;border:none;cursor:pointer;
+  background:var(--accent-gradient);color:#111;box-shadow:0 10px 34px rgba(255,59,48,0.12);transform:translateZ(0);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.btn.alt{background:transparent;color:var(--accent1);border:1px solid rgba(255,255,255,0.06);box-shadow:none}
+.btn:active{transform:translateY(2px)}
+
+/* Hero stats bar */
+.stats{
+  margin-top:26px;display:flex;gap:18px;align-items:stretch;
+}
+.stat{
+  flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);
+  display:flex;flex-direction:column;gap:6px;align-items:flex-start;
+}
+.stat .num{font-weight:900;font-size:22px}
+.stat .label{font-size:13px;color:var(--muted)}
+
+/* Sections */
+.section{margin-top:48px;padding:28px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border:1px solid rgba(255,255,255,0.02)}
+.section h2{font-size:22px;font-weight:800;letter-spacing:0.04em}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+@media (max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}.header{flex-direction:column;align-items:flex-start}.logo{width:120px;height:120px}}
+@media (max-width:640px){.grid{grid-template-columns:1fr}}
+
+.feature{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;min-height:120px;
+  display:flex;flex-direction:column;gap:8px;transition:transform .25s ease, box-shadow .25s ease;cursor:pointer;border:1px solid rgba(255,255,255,0.02)
+}
+.feature:hover{transform:translateY(-8px);box-shadow:0 18px 42px rgba(255,59,48,0.06)}
+.feature h3{font-size:16px;font-weight:800}
+.feature p{color:var(--muted);font-size:14px;line-height:1.4}
+
+/* Detailed stats */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.stat-card{padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border:1px solid rgba(255,255,255,0.02)}
+.stat-card h4{font-weight:800}
+.stat-card p{color:var(--muted);font-size:14px;margin-top:8px}
+
+/* Timeline & changelog */
+.timeline{display:flex;flex-direction:column;gap:18px;margin-top:18px}
+.timeline .item{display:flex;gap:18px;align-items:flex-start;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02)}
+.timeline .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(180deg,var(--accent1),var(--accent2));flex:0 0 10px;margin-top:6px}
+.timeline h4{font-weight:800}
+.timeline p{color:var(--muted);font-size:14px}
+
+/* Reactions row */
+.reactions{display:flex;gap:12px;margin-top:12px}
+.reaction{
+  width:56px;height:56px;border-radius:12px;display:grid;place-items:center;font-size:22px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  cursor:pointer;border:1px solid rgba(255,255,255,0.02);transition:transform .16s ease, box-shadow .16s ease;
+}
+.reaction:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(255,59,48,0.06)}
+
+/* Testimonials carousel */
+.carousel{display:flex; gap:16px; margin-top:18px; overflow-x:auto; padding-bottom:8px}
+.review{min-width:320px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+.stars{color:#ffd166}
+
+/* Counters large */
+.counters{display:flex;gap:18px;margin-top:18px}
+.counter{flex:1;padding:26px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);text-align:center}
+.counter .big{font-weight:900;font-size:36px}
+.counter .small{color:var(--muted);font-size:14px;margin-top:6px}
+
+/* Footer */
+.footer{margin-top:64px;padding:26px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);display:flex;justify-content:space-between;align-items:center;gap:18px}
+.footer p{color:var(--muted)}
+
+/* Canvas for particles */
+#particle-canvas{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.fade-in-up{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s ease}
+.visible{opacity:1;transform:translateY(0)}
+
+/* micro interactions */
+.ripple{position:absolute;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;opacity:0.9}
+</style>
+</head>
+<body>
+
+<div id="intro" aria-hidden="true">
+  <div class="card" role="presentation">
+    <div class="badge" id="intro-badge" aria-hidden="true"></div>
+    <div class="meta">
+      <h1>🔢 ᴄᴏᴜɴᴛʏᴄᴏᴜɴᴛ 🔢</h1>
+      <p>ᴛʜᴇ #1 ᴄᴏᴜɴᴛɪɴɢ ʙᴏᴛ ᴏɴ ᴅɪꜱᴄᴏʀᴅ — initializing leaderboards and preparing features.</p>
+      <div class="bar" aria-hidden="true"><i id="intro-bar"></i></div>
+    </div>
+  </div>
+</div>
+
+<canvas id="particle-canvas"></canvas>
+
+<main class="wrap" id="page">
+  <div class="header fade-in-up">
+    <div class="logo" id="main-logo" role="img" aria-label="CountyCount logo"></div>
+    <div class="title">
+      <h1>🔢 ᴄᴏᴜɴᴛʏᴄᴏᴜɴᴛ 🔢</h1>
+      <p>ᴛʜᴇ #1 ᴄᴏᴜɴᴛɪɴɢ ʙᴏᴛ ᴏɴ ᴅɪꜱᴄᴏʀᴅ — lightning-fast, fully customizable, and completely free.</p>
+      <div class="ctas">
+        <button class="btn" id="invite-btn">🔗 Invite Bot</button>
+        <button class="btn alt" id="docs-btn">📖 Docs</button>
+        <button class="btn alt" id="support-btn">💬 Support</button>
+      </div>
+      <div class="stats" style="margin-top:14px">
+        <div class="stat">
+          <div class="num" id="servers-text">&gt;102</div>
+          <div class="label">Servers</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="users">Over 15000</div>
+          <div class="label">Users</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="uptime">99.9%</div>
+          <div class="label">Uptime</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section fade-in-up" id="features">
+    <h2>✨ ꜰᴇᴀᴛᴜʀᴇꜱ ✨</h2>
+    <div class="grid">
+      <div class="feature" data-emoji="🎯"><h3>Multiple Counting Modes</h3><p>Decimal, Binary, Hex, UTF-8, Greek — mode rules adapt automatically and show live hints.</p></div>
+      <div class="feature" data-emoji="📊"><h3>Advanced Statistics</h3><p>Leaderboards • Streaks • Achievements • Voice Channel statistics and global tracking.</p></div>
+      <div class="feature" data-emoji="🎨"><h3>Fully Customizable</h3><p>Custom emojis, colors, templates and JSON embeds — tailor CountyCount to your server style.</p></div>
+      <div class="feature" data-emoji="⚡"><h3>Lightning Fast</h3><p>Average response time &lt;50ms with optimized DB caching and failover handling.</p></div>
+      <div class="feature" data-emoji="🎮"><h3>Interactive Features</h3><p>Reaction roles, logging, math expression support, edit/delete detection and more.</p></div>
+      <div class="feature" data-emoji="🆓"><h3>Completely Free</h3><p>No paywalls, no vote-locked commands, no premium tiers — all core features unlocked.</p></div>
+    </div>
+    <div style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div class="reactions" id="reactions-row">
+        <div class="reaction" data-what="love">❤️</div>
+        <div class="reaction" data-what="fire">🔥</div>
+        <div class="reaction" data-what="clap">👏</div>
+        <div class="reaction" data-what="thinking">🤔</div>
+        <div class="reaction" data-what="party">🎉</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:12px">
+        <button class="btn alt" id="changelog">📝 Changelog</button>
+        <button class="btn alt" id="stats-btn">📊 Stats</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fade-in-up" id="statistics">
+    <h2>📊 Key Statistics</h2>
+    <div class="stats-grid">
+      <div class="stat-card"><h4>Total Lines of Code</h4><p>2,179 lines (optimized, production-ready).</p></div>
+      <div class="stat-card"><h4>Database Tables</h4><p>11 tables supporting counts, users, achievements, logs and configs.</p></div>
+      <div class="stat-card"><h4>Slash Commands</h4><p>25+ slash commands: setup, config, achievements, leaderboards, moderation tools.</p></div>
+      <div class="stat-card"><h4>Background Tasks</h4><p>3 automated systems: status rotation, voice updates, Top.gg posting.</p></div>
+      <div class="stat-card"><h4>Counting Modes</h4><p>5 modes: Decimal • Binary • Hex • UTF-8 • Greek.</p></div>
+      <div class="stat-card"><h4>Achievements</h4><p>5 milestone achievements with confetti reactions and tracking.</p></div>
+      <div class="stat-card"><h4>Average Response Time</h4><p>&lt;50ms (typical), optimized DB queries & caching.</p></div>
+      <div class="stat-card"><h4>Uptime</h4><p>99.9% guaranteed with distributed failover testing.</p></div>
+      <div class="stat-card"><h4>Scalability</h4><p>Tested up to many concurrent guilds; handles hundreds of counts per minute.</p></div>
+    </div>
+  </section>
+
+  <section class="section fade-in-up" id="counters">
+    <h2>📈 Live-ish Counters</h2>
+    <div class="counters">
+      <div class="counter">
+        <div class="big" data-target="15000" id="counter-users">~10,000</div>
+        <div class="small">Active Users</div>
+      </div>
+      <div class="counter">
+        <div class="big" id="counter-servers-display">&gt;102</div>
+        <div class="small">Trusted Servers</div>
+      </div>
+      <div class="counter">
+        <div class="big" data-target="7823993" id="counter-counts">58,013,304</div>
+        <div class="small">~ Total Counts Processed (all-time)</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fade-in-up" id="why">
+    <h2>🌟 Why Choose CountyCount?</h2>
+    <div style="margin-top:12px;display:grid;gap:12px">
+      <div class="stat-card"><h4>Most Feature-Rich</h4><p>Multiple modes, competitive mode, achievements, global leaderboards and voice updates in one package.</p></div>
+      <div class="stat-card"><h4>Completely Free</h4><p>No paywalls, no premium features — everyone gets the full experience.</p></div>
+      <div class="stat-card"><h4>Active Development</h4><p>Regular updates, community-driven enhancements and rapid bug fixes.</p></div>
+      <div class="stat-card"><h4>High Performance</h4><p>Optimized DB with caching, &lt;50ms responses, and robust background tasks.</p></div>
+      <div class="stat-card"><h4>Privacy-Minded</h4><p>Opt-out available, no selling of personal data, GDPR-aware retention policies.</p></div>
+    </div>
+  </section>
+
+  <section class="section fade-in-up" id="changelog-section">
+    <h2>📝 Changelog (Highlights)</h2>
+    <div class="timeline">
+      <div class="item"><div class="dot"></div><div><h4>Version 3.0.0 — The Mega Update (Jan 2026)</h4><p>Global leaderboard system, achievement system, competitive counting mode, voice channel status updates, enhanced message monitoring, confirmation + invalidation systems, and major performance upgrades.</p></div></div>
+      <div class="item"><div class="dot"></div><div><h4>Version 2.5.0 — Customization (Dec 2025)</h4><p>Custom emoji reactions, embed colors, templates, blacklist/whitelist, reaction-role system, Greek & UTF-8 modes and improved parsing.</p></div></div>
+      <div class="item"><div class="dot"></div><div><h4>Version 2.0.0 — Major Overhaul (Nov 2025)</h4><p>Slash commands, multi-mode counting, server leaderboards, user stats and a large performance/DB refactor.</p></div></div>
+      <div class="item"><div class="dot"></div><div><h4>Roadmap</h4><p>Upcoming: multi-channel counting, web dashboard, advanced analytics, API access, AI anti-cheat and tournament systems (Q1–Q2 2026).</p></div></div>
+    </div>
+  </section>
+
+  <section class="section fade-in-up" id="faq" aria-labelledby="faq-title">
+    <h2 id="faq-title">❓ Frequently Asked Questions</h2>
+    <div style="margin-top:12px;display:grid;gap:12px">
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">Is CountyCount completely free?</summary><div style="color:var(--muted);margin-top:8px">Yes. Every single feature is 100% free. No premium tiers, no paywalls, no hidden costs.</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">Do I need to vote to use features?</summary><div style="color:var(--muted);margin-top:8px">Voting is optional and only unlocks minor cosmetic easter eggs. All core features work without voting.</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">How do I add CountyCount to my server?</summary><div style="color:var(--muted);margin-top:8px">Click Invite, authorize the bot, then run <code>/setup</code> or <code>/config channel #your-channel</code>. Setup typically completes in under 30 seconds.</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">What permissions are required?</summary><div style="color:var(--muted);margin-top:8px">Read Messages, Send Messages, Add Reactions, Manage Messages (for cleanup), and optionally Manage Channels for voice status features.</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">Can I use CountyCount in multiple channels?</summary><div style="color:var(--muted);margin-top:8px">Currently one counting channel per server. Multi-channel support is planned on the roadmap.</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">Does the bot store data?</summary><div style="color:var(--muted);margin-top:8px">Only counting statistics, leaderboards and minimal logs required for integrity. Opt-out is available with <code>/snipe</code>.</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">How do I delete my data?</summary><div style="color:var(--muted);margin-top:8px">Use <code>/snipe @yourself</code> to remove your statistics from a server. Inactive servers may be pruned after 90+ days.</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">What is Force Mode & Strict Force Mode?</summary><div style="color:var(--muted);margin-top:8px">Force Mode keeps the counting channel clean by deleting non-count messages. Strict Force Mode deletes wrong numbers instantly (no error messages).</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">Can I customize reactions, colors and templates?</summary><div style="color:var(--muted);margin-top:8px">Yes. Use <code>/config emoji</code>, <code>/config color #HEX</code> and <code>/config templates</code> (JSON) to customize behavior and messages.</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">What counting modes are available?</summary><div style="color:var(--muted);margin-top:8px">Decimal, Binary, Hexadecimal, UTF-8 characters and Greek letters. Additional modes (Roman, scientific) are planned.</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">What happens if the bot goes offline?</summary><div style="color:var(--muted);margin-top:8px">Counts are saved periodically (every ~10s). When the bot returns, counting resumes from the last saved number.</div></details>
+
+      <details style="background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)"><summary style="font-weight:800;cursor:pointer">How does the global leaderboard work?</summary><div style="color:var(--muted);margin-top:8px">Global leaderboard aggregates counts across all servers. Use <code>/globalleaderboard</code> to view top counters worldwide.</div></details>
+    </div>
+  </section>
+
+  <section class="section fade-in-up" id="technical">
+    <h2>🛠️ Technical Summary</h2>
+    <div style="margin-top:12px">
+      <div class="stat-card"><h4>Architecture</h4><p>Python 3.11+, discord.py 2.6+, SQLite3 with caching, fully async implementation and multi-level logging.</p></div>
+      <div class="stat-card" style="margin-top:12px"><h4>Performance</h4><p>Average response time ~35ms, cached DB queries &lt;5ms, cache hit rate &gt;95%.</p></div>
+      <div class="stat-card" style="margin-top:12px"><h4>Security</h4><p>Input sanitization, rate limiting, permission validation, safe-eval for math and audit logging.</p></div>
+    </div>
+  </section>
+
+  <div class="footer fade-in-up">
+    <div>
+      <p style="font-weight:800">🔢 CountyCount</p>
+      <p class="muted" style="color:var(--muted);font-size:13px">Trusted by &gt;102 Servers • Over 15,000 users (estimate)</p>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <button class="btn" id="invite-footer">Invite</button>
+      <button class="btn alt" id="support-footer">Support</button>
+    </div>
+  </div>
+</main>
+
+<script>
+const sleep=(ms)=>new Promise(r=>setTimeout(r,ms))
+const introBar=document.getElementById('intro-bar')
+const intro=document.getElementById('intro')
+const particleCanvas=document.getElementById('particle-canvas')
+const ctx=particleCanvas.getContext('2d')
+let particles=[]
+
+async function introSequence(){
+  introBar.style.width='12%'
+  await sleep(220)
+  introBar.style.width='36%'
+  await sleep(220)
+  introBar.style.width='68%'
+  await sleep(240)
+  introBar.style.width='94%'
+  await sleep(420)
+  introBar.style.width='100%'
+  await sleep(260)
+  intro.style.transition='opacity .7s ease, transform .7s ease'
+  intro.style.opacity='0'
+  intro.style.transform='scale(.98) translateY(-10px)'
+  await sleep(700)
+  intro.remove()
+  revealAll()
+  startParticles()
+  animateCounters()
+}
+function revealAll(){
+  document.querySelectorAll('.fade-in-up').forEach((el,i)=>{
+    setTimeout(()=>el.classList.add('visible'), 120 + i*80)
+  })
+}
+function resizeCanvas(){
+  particleCanvas.width=window.innerWidth
+  particleCanvas.height=window.innerHeight
+}
+window.addEventListener('resize',resizeCanvas)
+resizeCanvas()
+
+function startParticles(){
+  particles=[]
+  for(let i=0;i<90;i++){
+    particles.push({
+      x:Math.random()*particleCanvas.width,
+      y:Math.random()*particleCanvas.height,
+      vx:(Math.random()-0.5)*0.6,
+      vy:(Math.random()-0.5)*0.6,
+      r:Math.random()*2.4+0.6,
+      life:Math.random()*300+220
+    })
+  }
+  requestAnimationFrame(step)
+}
+function step(){
+  ctx.clearRect(0,0,particleCanvas.width,particleCanvas.height)
+  for(let p of particles){
+    p.x+=p.vx;p.y+=p.vy;p.life--
+    if(p.x< -10) p.x=particleCanvas.width+10
+    if(p.x>particleCanvas.width+10) p.x=-10
+    if(p.y< -10) p.y=particleCanvas.height+10
+    if(p.y>particleCanvas.height+10) p.y=-10
+    ctx.beginPath()
+    ctx.fillStyle=`rgba(${Math.floor(255)},${Math.floor(120+Math.random()*80)},${Math.floor(80)},${Math.max(0.06,Math.min(0.22,p.life/800))})`
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
+    ctx.fill()
+  }
+  requestAnimationFrame(step)
+}
+
+function animateNumber(el, target, duration=1600){
+  let start=0, startTime=null
+  function tick(ts){
+    if(!startTime) startTime=ts
+    const elapsed=ts-startTime
+    const progress=Math.min(elapsed/duration,1)
+    const value=Math.floor(start + (target-start)*easeOutCubic(progress))
+    el.textContent = value.toLocaleString('en-US')
+    if(progress<1) requestAnimationFrame(tick)
+  }
+  requestAnimationFrame(tick)
+}
+function easeOutCubic(t){return 1 - Math.pow(1-t,3)}
+function animateCounters(){
+  const usersEl=document.getElementById('counter-users')
+  const countsEl=document.getElementById('counter-counts')
+  animateNumber(usersEl, 50000, 1600)
+  animateNumber(countsEl, parseInt(countsEl.getAttribute('data-target')), 2200)
+  document.getElementById('users').textContent='~50,000'
+  document.getElementById('servers-text').textContent='>102'
+}
+
+document.querySelectorAll('.feature').forEach(f=>{
+  f.addEventListener('pointerenter',e=>{
+    const emoji=f.dataset.emoji
+    spawnEmojiImpulse(e.clientX,e.clientY,emoji)
+  })
+})
+
+function spawnEmojiImpulse(x,y,emoji){
+  const span=document.createElement('div')
+  span.style.position='fixed'
+  span.style.left=(x)+'px'
+  span.style.top=(y)+'px'
+  span.style.transform='translate(-50%,-50%)'
+  span.style.pointerEvents='none'
+  span.style.fontSize='22px'
+  span.style.zIndex=9999
+  span.textContent=emoji
+  document.body.appendChild(span)
+  const angle=(Math.random()-0.5)*120
+  const dist=60+Math.random()*40
+  span.animate([
+    {transform:'translate(-50%,-50%) scale(1)', opacity:1},
+    {transform:`translate(calc(-50% + ${Math.cos(angle*Math.PI/180)*dist}px), calc(-50% + ${Math.sin(angle*Math.PI/180)*dist}px)) scale(1.6)`, opacity:0}
+  ],{duration:900,easing:'cubic-bezier(.2,.9,.2,1)'})
+  setTimeout(()=>span.remove(),950)
+}
+
+function confettiBurst(x,y,amount=36){
+  for(let i=0;i<amount;i++){
+    const el=document.createElement('div')
+    el.className='ripple'
+    el.style.left=x+'px'
+    el.style.top=y+'px'
+    el.style.width='10px'
+    el.style.height='10px'
+    el.style.background=`linear-gradient(180deg, ${randomAccentColor()}, ${randomAccentColor()})`
+    el.style.opacity=1
+    el.style.zIndex=9999
+    document.body.appendChild(el)
+    const vx=(Math.random()-0.5)*12
+    const vy=(Math.random()-1.8)*9
+    const rot=(Math.random()-0.5)*720
+    const dx=vx*18, dy=vy*18
+    el.animate([
+      {transform:`translate(-50%,-50%) translate(0px,0px) rotate(0deg) scale(1)`, opacity:1},
+      {transform:`translate(-50%,-50%) translate(${dx}px,${dy}px) rotate(${rot}deg) scale(0.6)`, opacity:0}
+    ],{duration:700+Math.random()*700,easing:'cubic-bezier(.18,.9,.26,1)'})
+    setTimeout(()=>el.remove(),1500)
+  }
+}
+function randomAccentColor(){return Math.random()>0.5?getComputedStyle(document.documentElement).getPropertyValue('--accent1').trim():getComputedStyle(document.documentElement).getPropertyValue('--accent2').trim()}
+
+document.querySelectorAll('.reaction').forEach(r=>{
+  r.addEventListener('click',e=>{
+    const rect=r.getBoundingClientRect()
+    spawnEmojiImpulse(rect.left+rect.width/2, rect.top+rect.height/2, r.textContent)
+    r.animate([{transform:'translateY(0)'},{transform:'translateY(-8px)'},{transform:'translateY(0)'}],{duration:420,easing:'cubic-bezier(.2,.9,.2,1)'})
+  })
+})
+
+const inviteBtns=[document.getElementById('invite-btn'), document.getElementById('invite-footer')]
+inviteBtns.forEach(b=>{
+  b.addEventListener('click',e=>{
+    const rect=b.getBoundingClientRect()
+    confettiBurst(rect.left+rect.width/2, rect.top+rect.height/2, 34)
+    b.animate([{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1.02)'},{transform:'scale(1)'}],{duration:420})
+    window.open('#','_blank')
+  })
+})
+
+document.getElementById('docs-btn').addEventListener('click',e=>{
+  const rect=e.currentTarget.getBoundingClientRect()
+  confettiBurst(rect.left+rect.width/2, rect.top+rect.height/2, 20)
+  window.location.hash='#faq'
+})
+document.getElementById('support-btn').addEventListener('click',e=>{
+  window.location.hash='#testimonials'
+})
+document.getElementById('changelog').addEventListener('click',e=>{
+  document.getElementById('changelog-section').scrollIntoView({behavior:'smooth',block:'start'})
+})
+document.getElementById('stats-btn').addEventListener('click',e=>{
+  document.getElementById('statistics').scrollIntoView({behavior:'smooth',block:'start'})
+})
+
+document.addEventListener('mousemove',e=>{
+  const header=document.querySelector('.header')
+  const x=(e.clientX/window.innerWidth-0.5)*8
+  const y=(e.clientY/window.innerHeight-0.5)*6
+  header.style.transform=`translateZ(0) perspective(900px) rotateX(${y}deg) rotateY(${x}deg)`
+  const logo=document.querySelector('.logo')
+  logo.style.transform=`translateZ(0) rotate(${x*1.2}deg) translateY(${y}px)`
+})
+
+document.addEventListener('pointerdown',e=>{
+  const ripple=document.createElement('div')
+  ripple.className='ripple'
+  ripple.style.left=e.clientX+'px'
+  ripple.style.top=e.clientY+'px'
+  ripple.style.width='14px'
+  ripple.style.height='14px'
+  ripple.style.background='rgba(255,255,255,0.06)'
+  ripple.style.zIndex=9999
+  document.body.appendChild(ripple)
+  ripple.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:0.9},{transform:'translate(-50%,-50%) scale(22)',opacity:0}],{duration:650,easing:'cubic-bezier(.18,.9,.26,1)'})
+  setTimeout(()=>ripple.remove(),700)
+})
+
+document.querySelectorAll('.review').forEach(rv=>{
+  rv.addEventListener('mouseenter', ()=>rv.style.transform='translateY(-8px)')
+  rv.addEventListener('mouseleave', ()=>rv.style.transform='translateY(0)')
+})
+
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting) en.target.classList.add('visible')
+  })
+},{threshold:0.12})
+document.querySelectorAll('.section').forEach(s=>io.observe(s))
+
+introSequence()
+</script>
+</body>
+</html>
