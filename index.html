@@ -1,0 +1,200 @@
+<html lang="en"><style class="adjust-screen-brightness" media="screen">html::before, :not(:root):fullscreen::before {
+  content: " ";
+  z-index: 2147483647;
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.10999999999999999);
+}
+:not(:root):fullscreen::backdrop {
+  display: none;
+}</style><head><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+        <meta charset="utf-8">
+        <title>CountyCount | Premium Counting Bot</title>
+        <link rel="icon" sizes="192x192" href="https://cdn.discordapp.com/avatars/1433616050188062821/fe7e7bafc90f35ccba3bc6f917148549.png?size=1024">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#8965D6">
+
+        <meta property="og:title" content="counting">
+        <meta property="og:type" content="website">
+        <meta property="og:description" content="Compete with 1,162,209 other Discord servers to count as high as possible.">
+        <meta property="og:url" content="https://countycount.netlify.app/">
+        <meta property="og:image" content="https://cdn.discordapp.com/avatars/1433616050188062821/fe7e7bafc90f35ccba3bc6f917148549.png?size=1024">
+
+        <style>
+          :root{
+  --accent1:#ff3b30;
+  --accent2:#ff8a80;
+  --accent-gradient:linear-gradient(135deg,var(--accent1),var(--accent2));
+
+  --accent-glow:0 10px 34px rgba(255,59,48,0.18);
+  --accent-glow-strong:0 18px 48px rgba(255,59,48,0.28);
+
+  --radius-pill:999px;
+}
+          html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    background-attachment: fixed;
+}
+
+button > i {
+    border-radius: 0;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.no-transition {
+    transition: none;
+}
+
+::selection{
+  background:var(--accent1);
+  color:#fff;
+}
+
+a{
+  color:var(--accent1);
+}
+
+.counting-background{
+  background-image:linear-gradient(135deg,#2a1f4a,#1b162d);
+}
+
+.countingclassic-background{
+  background:linear-gradient(135deg,#2a1f4a,#1b162d);
+}
+
+button:focus-visible{
+  outline:2px solid var(--accent1);
+  outline-offset:2px;
+}
+
+.countingclassic-background h2 {
+    text-shadow: 4px 4px 0 black;
+}
+
+.break-word {
+    word-break: break-word;
+}
+
+.faded-out {
+    opacity: 0.3;
+}
+
+.score {
+    display: inline-block;
+}
+
+.bottom-margin {
+    margin-bottom: 1em;
+}
+
+#page {
+    width: 75px;
+    text-align: center;
+}
+
+.counting-icon {
+    width: 70px;
+    height: 100px;
+    object-fit: cover;
+    object-position: center;
+    margin-right: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        --primary:#cfbcff;
+        --on-primary:#381e72;
+        --primary-container:#4f378a;
+        --on-primary-container:#e9ddff;
+        --secondary:#cbc2db;
+        --on-secondary:#332d41;
+        --secondary-container:#4a4458;
+        --on-secondary-container:#e8def8;
+        --tertiary:#efb8c8;
+        --on-tertiary:#4a2532;
+        --tertiary-container:#633b48;
+        --on-tertiary-container:#ffd9e3;
+        --error:#ffb4ab;
+        --on-error:#690005;
+        --error-container:#93000a;
+        --on-error-container:#ffb4ab;
+        --background:#1c1b1e;
+        --on-background:#e6e1e6;
+        --surface:#141316;
+        --on-surface:#e6e1e6;
+        --surface-variant:#49454e;
+        --on-surface-variant:#cac4cf;
+        --outline:#948f99;
+        --outline-variant:#49454e;
+        --shadow:#000000;
+        --scrim:#000000;
+        --inverse-surface:#e6e1e6;
+        --inverse-on-surface:#313033;
+        --inverse-primary:#6750a4;
+        --surface-dim:#141316;
+        --surface-bright:#3a383c;
+        --surface-container-lowest:#0f0e11;
+        --surface-container-low:#1c1b1e;
+        --surface-container:#201f22;
+        --surface-container-high:#2b292d;
+        --surface-container-highest:#363438;
+    }
+}
+        </style>
+    </head>
+    <body class="middle-align center-align counting-background">
+        <section class="center-align margin">
+            <div class="center center-align middle-align flex-wrap">
+                <a href="/">
+                    <img class="counting-icon" src="assets/countbotclear.png">
+                    <h2 class="white-text no-margin">CountyCount</h2>
+                </a>
+            </div>
+            <h5 class="center-align white-text small">Compete with 17172 other Discord servers to count as high as possible.</h5>
+            <div class="large-margin">
+                <a href="https://discord.com/oauth2/authorize/?client_id=1433616050188062821&amp;scope=bot">
+                    <button class="deep-purple10 white-text tiny-margin">
+                        <i>add</i>
+                        <span>Add bot</span>
+                    </button>
+                </a>
+                <a href="https://discord.gg/2saFDCd">
+                    <button class="deep-purple10 white-text tiny-margin">
+                        <i>forum</i>
+                        <span>Support server</span>
+                    </button>
+                </a>
+                
+                <a href="/scoreboards">
+                    <button class="deep-purple10 white-text tiny-margin">
+                        <i>leaderboard</i>
+                        <span>Scoreboards</span>
+                    </button>
+                </a>
+                
+                
+                <!-- <a href="https://www.patreon.com/counting">
+                    <button class="deep-purple10 white-text tiny-margin">
+                        <i>volunteer_activism</i>
+                        <span>Patreon</span>
+                    </button>
+                </a> -->
+                
+            </div>
+            <a href="https://top.gg/bot/1433616050188062821"><img src="https://top.gg/api/widget/upvotes/1433616050188062821.svg?noavatar=true" alt="counting"></a>
+            <a href="https://top.gg/bot/1433616050188062821"><img src="https://top.gg/api/widget/status/1433616050188062821.svg?noavatar=true" alt="counting"></a>
+            <a href="https://top.gg/bot/1433616050188062821"><img src="https://top.gg/api/widget/servers/1433616050188062821.svg?noavatar=true" alt="counting"></a>
+        </section>
